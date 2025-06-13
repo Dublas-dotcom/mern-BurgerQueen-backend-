@@ -2,7 +2,7 @@ const express = required('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const { dot } = require('node:test/reporters');
+
 // Load environment variables from .env file
 dotenv.config();
 
