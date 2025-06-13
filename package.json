@@ -1,0 +1,27 @@
+{
+  "name": "mern-burgerqueen-backend-",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dublas-dotcom/mern-BurgerQueen-backend-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dublas-dotcom/mern-BurgerQueen-backend-/issues"
+  },
+  "homepage": "https://github.com/Dublas-dotcom/mern-BurgerQueen-backend-#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.15.2",
+    "nodeman": "^1.1.2"
+  }
+}
