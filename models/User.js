@@ -1,24 +1,21 @@
-const e = require('cors');
 const mongoose = require('mongoose');
-const { use } = require('react');
 
-// mongoose schema = blueprint for a document
-const userShema = new mongoose.userShema({
-    username: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-},{timestamps: true});
+// Mongoose schema = blueprint of our user data
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  }
+}, { timestamps: true }); // Adds createdAt and updatedAt
 
-exports = mongoose.model('User', userShema);
-// mongoose.model = creates a model from the schema
+module.exports = mongoose.model('User', userSchema);

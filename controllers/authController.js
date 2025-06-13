@@ -2,76 +2,62 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Register a new user
-exports.registerUaer = async (request, response) => {
-    try {
-        // destructure the request body
-        const {username, email, password} = request.body;
-        // Validate input
-        if (!username || !email || !password) {
-            return response.status(400).json({message: 'All fields are required'});
-        }
-        // Check if user already exists
-        const existingUser = await User.findOne({email});
-        if (existingUser) {
-            return response.status(400).json({message: 'User already exists'});
-        }
-        // Hash the password
-        const Salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, Salt);
-        // Create a new user
-        const newUser = new User({
-            username,
-            email,
-            password: hashedPassword
-        })
-        const savedUser = await newUser.save();
-       response.status(201).json({ message: 'User registered successfully', user: savedUser });
+// REGISTER Controller
+exports.registerUser = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
 
-              
-    }
-    catch (error) {
-        console.error('Error registering user: Controller ', error);
-        response.status(500).json({ message: 'Internal server error' });
-    }
-}
-// Login a user
-exports.loginUser = async (request, response) => {
-    try {
-        // destructure the request body
-        const { email, password } = request.body;
-        // Validate input
-        if (!email || !password) {
-            return response.status(400).json({ message: 'Email and password are required' });
-        }
-        // Check if user exists
-        const user = await User.findOne({ email });
-        if (!user){
-            return response.status(400).json({ message: 'Invalid email or password' });
-        }
-        // Check password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return response.status(400).json({ message: 'Invalid email or password' });
-        }
-        // Create JWT token
-        const token = jwt.sign(
-            { id: user._id },
-             process.env.JWT_SECRET,
-            { expiresIn: '1h' });
-        // Return success response
-        response.status(200).json({
-            message: 'Login successful',
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email
-            },
-            token
-        });
-    }
-    catch (error) {
-        console.error('Error logging in user: Controller ', error);
-        response.status(500).json({ message: 'Internal server error' });
-    }
-}
+    // 1. Check if user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) return res.status(400).json({ msg: 'User already exists' });
+
+    // 2. Hash password
+    const salt = await bcrypt.genSalt(10); // Think: adds random noise to make hash stronger
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // 3. Save user
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
+    const savedUser = await newUser.save();
+    res.status(201).json({ msg: 'User created', user: savedUser._id });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// LOGIN Controller
+exports.loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 1. Find user by email
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ msg: 'Email not found' });
+
+    // 2. Check password match
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ msg: 'incorrect password' });
+    // 3. Create JWT token
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '2d' }
+    );
+
+    // 4. Return user info + token
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
