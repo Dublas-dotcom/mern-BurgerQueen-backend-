@@ -28,5 +28,10 @@ app.listen(PORT, () => {
 app.get('/', (req, res) => {
     res.send('Welcome to the Burger Queen API');
 });
+// Import and use the menu routes
+const menuRouter = require('./routes/menu');
 const authRouter = require('./routes/auth');
-app.use('/auth', authRouter);
+
+//routes
+app.use('/api', menuRouter);
+app.use('/api', authRouter);
